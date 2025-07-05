@@ -1,15 +1,22 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import {
   CallToolRequestSchema,
-  CallToolResult,
+  type CallToolResult,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { NativeMessageType } from 'chrome-mcp-shared';
 import nativeMessagingHostInstance from '../native-messaging-host';
-import { NativeMessageType, TOOL_SCHEMAS } from 'chrome-mcp-shared';
 
 export const setupTools = (server: Server) => {
   // List tools handler
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOL_SCHEMAS }));
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
+    const tools = await nativeMessagingHostInstance.sendRequestToExtensionAndWait(
+      {},
+      NativeMessageType.LIST_TOOLS,
+      30000,
+    );
+    return { tools: tools.data };
+  });
 
   // Call tool handler
   server.setRequestHandler(CallToolRequestSchema, async (request) =>

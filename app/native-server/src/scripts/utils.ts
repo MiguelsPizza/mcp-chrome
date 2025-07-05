@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
 import { execSync } from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { promisify } from 'util';
 import { COMMAND_NAME, DESCRIPTION, EXTENSION_ID, HOST_NAME } from './constant';
 
@@ -156,10 +156,10 @@ async function ensureWindowsFilePermissions(packageDistDir: string): Promise<voi
       try {
         // 检查文件是否为只读，如果是则移除只读属性
         const stats = fs.statSync(filePath);
-        if (!(stats.mode & parseInt('200', 8))) {
+        if (!(stats.mode & 0o200)) {
           // 检查写权限
           // 尝试移除只读属性
-          fs.chmodSync(filePath, stats.mode | parseInt('200', 8));
+          fs.chmodSync(filePath, stats.mode | 0o200);
           console.log(
             colorText(`✓ Removed read-only attribute from ${path.basename(filePath)}`, 'green'),
           );
@@ -195,7 +195,10 @@ export async function createManifestContent(): Promise<any> {
     description: DESCRIPTION,
     path: mainPath, // Node.js可执行文件路径
     type: 'stdio',
-    allowed_origins: [`chrome-extension://${EXTENSION_ID}/`],
+    allowed_origins: [
+      `chrome-extension://mhipkdochajohklmmjinmicahanmldbj/`,
+      // 'chrome-extension://nlpcdogabdkdgdmklcilhmblafdacpcg/',
+    ],
   };
 }
 

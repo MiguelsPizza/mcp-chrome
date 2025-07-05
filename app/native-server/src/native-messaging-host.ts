@@ -1,8 +1,8 @@
-import { stdin, stdout } from 'process';
-import { Server } from './server';
-import { v4 as uuidv4 } from 'uuid';
 import { NativeMessageType } from 'chrome-mcp-shared';
+import { stdin, stdout } from 'process';
+import { v4 as uuidv4 } from 'uuid';
 import { TIMEOUTS } from './constant';
+import type { Server } from './server';
 
 interface PendingRequest {
   resolve: (value: any) => void;
@@ -169,7 +169,6 @@ export class NativeMessagingHost {
         type: NativeMessageType.SERVER_STARTED,
         payload: { port },
       });
-
     } catch (error: any) {
       this.sendError(`Failed to start server: ${error.message}`);
     }
@@ -235,8 +234,6 @@ export class NativeMessagingHost {
       payload: { message: errorMessage },
     });
   }
-
-
 
   /**
    * Clean up resources
